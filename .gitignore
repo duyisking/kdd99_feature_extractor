@@ -26,3 +26,12 @@
 *.exe
 *.out
 *.app
+
+Makefile
+CMakeFiles
+*.cmake
+CMakeCache.txt
+
+.vscode
+
+kdd99extractor
