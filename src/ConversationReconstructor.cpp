@@ -10,13 +10,7 @@
 namespace FeatureExtractor {
 	using namespace std;
 
-	ConversationReconstructor::ConversationReconstructor()
-		: timeouts()
-		, timeout_interval(timeouts.get_conversation_check_interval_ms())
-	{
-	}
-
-	ConversationReconstructor::ConversationReconstructor(Config &timeouts)
+	ConversationReconstructor::ConversationReconstructor(const Config &timeouts)
 		: timeouts(timeouts)
 		, timeout_interval(timeouts.get_conversation_check_interval_ms())
 	{
@@ -127,19 +121,18 @@ namespace FeatureExtractor {
 		// find, sort, add to queue
 		// Run no more often than once per timeout check interval
 		if (!timeout_interval.is_timedout(now)) {
-			timeout_interval.update_time(now);
 			return;
 		}
 		timeout_interval.update_time(now);
 
 		// Maximal timestamp that timedout connection can have
-		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn_timeout() * 1000000);
-		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab_timeout() * 1000000);
-		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst_timeout() * 1000000);
-		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin_timeout() * 1000000);
-		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack_timeout() * 1000000);
-		Timestamp max_udp = now - (timeouts.get_udp_timeout() * 1000000);
-		Timestamp max_icmp = now - (timeouts.get_icmp_timeout() * 1000000);
+		Timestamp max_tcp_syn = now - (timeouts.get_tcp_syn_timeout() * 1000);
+		Timestamp max_tcp_estab = now - (timeouts.get_tcp_estab_timeout() * 1000);
+		Timestamp max_tcp_rst = now - (timeouts.get_tcp_rst_timeout() * 1000);
+		Timestamp max_tcp_fin = now - (timeouts.get_tcp_fin_timeout() * 1000);
+		Timestamp max_tcp_last_ack = now - (timeouts.get_tcp_last_ack_timeout() * 1000);
+		Timestamp max_udp = now - (timeouts.get_udp_timeout() * 1000);
+		Timestamp max_icmp = now - (timeouts.get_icmp_timeout() * 1000);
 
 		// Temporary list of timed out conversations
 		vector<Conversation *> timedout_convs;

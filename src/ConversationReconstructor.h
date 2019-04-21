@@ -32,8 +32,7 @@ namespace FeatureExtractor {
 		 */
 		void check_timeouts(const Timestamp &now);
 	public:
-		ConversationReconstructor();
-		ConversationReconstructor(Config &timeouts);
+		ConversationReconstructor(const Config &timeouts);
 		~ConversationReconstructor();
 
 		/**

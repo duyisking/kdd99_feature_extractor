@@ -78,7 +78,7 @@ void signal_handler(int signum)
 void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 {
 	IpReassembler reasm;
-	ConversationReconstructor conv_reconstructor;
+	ConversationReconstructor conv_reconstructor(*config);
 	StatsEngine stats_engine(config);
 
 	bool has_more_traffic = true;
@@ -88,8 +88,10 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 		IpFragment *frag = sniffer->next_frame();
 		has_more_traffic = (frag != NULL);
 
-		
-		Packet *datagr = nullptr;
+        Timestamp now = Timestamp();
+        conv_reconstructor.report_time(now);
+
+        Packet *datagr = nullptr;
 		if (has_more_traffic) {
 			// Do some assertion about the type of packet just to be sure
 			// If sniffer's filter fails to fulfill this assertion, "continue" can be used here
@@ -98,7 +100,7 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 			assert((eth_type == IPV4 && (ip_proto == TCP || ip_proto == UDP || ip_proto == ICMP))
 				&& "Sniffer returned packet that is not (TCP or UDP or ICMP)");
 
-			Timestamp now = frag->get_end_ts();
+			now = frag->get_end_ts();
 
 			// IP Reassembly, frag must not be used after this
 			datagr = reasm.reassemble(frag);
@@ -142,31 +144,31 @@ void usage(const char *name)
 {
 	// Option '-' orignaly meant to use big read timeouts and exit on first timeout. Other approach used
 	// because original approach did not work (does this option make sense now?).
-	cout << "KDD'99-like feature extractor" << endl
-		<< "Build time : " << __DATE__ << " " << __TIME__ << endl << endl
-		<< "Usage: " << name << " [OPTION]... [FILE]" << endl
-		<< " -h, --help    Display this usage  " << endl
-		<< " -l, --list    List interfaces  " << endl
-		<< " -i   NUMBER   Capture from interface with given number (default 1)" << endl
-		<< " -p   MS       libpcap network read timeout in ms (default 1000)" << endl
-		<< " -e            Print extra features(IPs, ports, end timestamp)" << endl
-		<< " -v            Print filename/interface number before parsing each file" << endl
-		<< " -o   FILE     Write all output to FILE instead of standard output" << endl
-		<< " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
-		<< "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
-		<< " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
-		<< " -fi  MS       Max time between timed out IP fragments lookups in ms (default 1000)" << endl
-		<< " -tst SECONDS  TCP SYN timeout for states S0, S1 (default 120)" << endl
-		<< " -tet SECONDS  TCP timeout for established connections (default 5days)  " << endl
-		<< " -trt SECONDS  TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 10)" << endl
-		<< " -tft SECONDS  TCP FIN timeout for states S2, S3 (default 120)" << endl
-		<< " -tlt SECONDS  TCP last ACK timeout (default 30)" << endl
-		<< " -ut  SECONDS  UDP timeout  (default 180)" << endl
-		<< " -it  SECONDS  ICMP timeout  (default 30)" << endl
-		<< " -ci  MS       Max time between timed out connection lookups in ms (default 1000)" << endl
-		<< " -t   MS       Time window size in ms (default 2000)" << endl
-		<< " -c   NUMBER   Count window size (default 100)" << endl
-		<< endl;
+    cout << "KDD'99-like feature extractor" << endl
+         << "Build time : " << __DATE__ << " " << __TIME__ << endl << endl
+         << "Usage: " << name << " [OPTION]... [FILE]" << endl
+         << " -h, --help    Display this usage  " << endl
+         << " -l, --list    List interfaces  " << endl
+         << " -i   NUMBER   Capture from interface with given number (default 1)" << endl
+         << " -p   MS       libpcap network read timeout in ms (default 1000)" << endl
+         << " -e            Print extra features(IPs, ports, end timestamp)" << endl
+         << " -v            Print filename/interface number before parsing each file" << endl
+         << " -o   FILE     Write all output to FILE instead of standard output" << endl
+         << " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
+         << "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
+         << " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
+         << " -fi  MS       Max time between timed out IP fragments lookups in ms (default 1000)" << endl
+         << " -tst MS       TCP SYN timeout for states S0, S1 (default 2000)" << endl
+         << " -tet MS       TCP timeout for established connections (default 1 day)  " << endl
+         << " -trt MS       TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 2000)" << endl
+         << " -tft MS       TCP FIN timeout for states S2, S3 (default 2000)" << endl
+         << " -tlt MS       TCP last ACK timeout (default 30000)" << endl
+         << " -ut  MS       UDP timeout  (default 2000)" << endl
+         << " -it  MS       ICMP timeout  (default 2000)" << endl
+         << " -ci  MS       Max time between timed out connection lookups in ms (default 1000)" << endl
+         << " -t   MS       Time window size in ms (default 2000)" << endl
+         << " -c   NUMBER   Count window size (default 100)" << endl
+         << endl;
 }
 
 void list_interfaces()

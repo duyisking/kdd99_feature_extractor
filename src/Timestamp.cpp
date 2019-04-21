@@ -4,9 +4,8 @@
 namespace FeatureExtractor {
 	Timestamp::Timestamp()
 	{
-		ts.tv_sec = 0;
-		ts.tv_usec = 0;
-	}
+        gettimeofday(&ts, nullptr);
+    }
 
 	Timestamp::Timestamp(const struct timeval &ts)
 	{
