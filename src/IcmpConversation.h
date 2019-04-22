@@ -20,11 +20,12 @@ namespace FeatureExtractor {
 		IcmpConversation(const Packet *packet);
 		~IcmpConversation();
 
+        bool is_in_final_state() const;
 		icmp_field_type_t get_icmp_type();
 		void set_icmp_type(icmp_field_type_t icmp_type);
 		uint8_t get_icmp_code();
 		void get_icmp_code(uint8_t icmp_code);
 
-		service_t get_service() const;
+        service_t get_service() const;
 	};
 }

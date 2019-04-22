@@ -24,6 +24,12 @@ namespace FeatureExtractor {
 	{
 	}
 
+    bool IcmpConversation::is_in_final_state() const
+    {
+        // ICMP connection always has one packet
+        return true;
+    }
+
 
 	service_t IcmpConversation::get_service() const
 	{
