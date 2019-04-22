@@ -109,10 +109,6 @@ void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 			if (datagr) {
 				conv_reconstructor.add_packet(datagr);
 			}
-			else {
-				// Tell conversation reconstruction just how the time goes on
-				conv_reconstructor.report_time(now);
-			}
 		}
 
 		// Output timedout conversations 
