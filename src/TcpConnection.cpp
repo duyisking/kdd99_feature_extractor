@@ -38,7 +38,7 @@ namespace FeatureExtractor {
 			if (f.syn() && f.ack())
 				state = S4;
 			else if (f.syn())
-				state = S1;
+				state = S0;
 			else
 				state = OTH;
 			break;
