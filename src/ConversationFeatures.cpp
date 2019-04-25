@@ -189,27 +189,27 @@ namespace FeatureExtractor {
 
 		// Derived time windows features
 		ss << fixed << showpoint <<setprecision(2);
-		// ss << count << ',';
-		// ss << srv_count << ',';
-		// ss << serror_rate << ',';
-		// ss << srv_serror_rate << ',';
-		// ss << rerror_rate << ',';
-		// ss << srv_rerror_rate << ',';
-		// ss << same_srv_rate << ',';
-		// ss << diff_srv_rate << ',';
-		// ss << get_srv_diff_host_rate() << ',';
+		ss << count << ',';
+		ss << srv_count << ',';
+		ss << serror_rate << ',';
+		ss << srv_serror_rate << ',';
+		ss << rerror_rate << ',';
+		ss << srv_rerror_rate << ',';
+		ss << same_srv_rate << ',';
+		ss << diff_srv_rate << ',';
+		ss << get_srv_diff_host_rate() << ',';
 
 		// Derived connection count window features
-		// ss << dst_host_count << ',';
-		// ss << dst_host_srv_count << ',';
-		// ss << dst_host_same_srv_rate << ',';
-		// ss << dst_host_diff_srv_rate << ',';
-		// ss << dst_host_same_src_port_rate << ',';
-		// ss << get_dst_host_srv_diff_host_rate() << ',';
-		// ss << dst_host_serror_rate << ',';
-		// ss << dst_host_srv_serror_rate << ',';
-		// ss << dst_host_rerror_rate << ',';
-		// ss << dst_host_srv_rerror_rate;
+		ss << dst_host_count << ',';
+		ss << dst_host_srv_count << ',';
+		ss << dst_host_same_srv_rate << ',';
+		ss << dst_host_diff_srv_rate << ',';
+		ss << dst_host_same_src_port_rate << ',';
+		ss << get_dst_host_srv_diff_host_rate() << ',';
+		ss << dst_host_serror_rate << ',';
+		ss << dst_host_srv_serror_rate << ',';
+		ss << dst_host_rerror_rate << ',';
+		ss << dst_host_srv_rerror_rate;
 
 		if (print_extra_features) {
 			const FiveTuple *ft = conv->get_five_tuple_ptr();
