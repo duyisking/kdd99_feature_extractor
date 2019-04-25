@@ -17,6 +17,7 @@ using namespace std;
 using namespace FeatureExtractor;
 
 static volatile bool temination_requested = false;
+std::ofstream out_stream;
 
 void signal_handler(int signum);
 void usage(const char *name);
@@ -209,7 +210,7 @@ void parse_args(int argc, char **argv, Config *config)
 		// Second character
 		char *endptr;
 		long num;
-		std::ofstream out_stream;
+
 		switch (argv[i][1]) {
 		case '-': // Long option
 			if (strcmp(argv[i], "--help") == 0) {
