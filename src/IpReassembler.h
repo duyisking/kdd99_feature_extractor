@@ -55,8 +55,7 @@ namespace FeatureExtractor {
 		void check_timeouts(const Timestamp &now);
 
 	public:
-		IpReassembler();
-		IpReassembler(Config &timeouts);
+		IpReassembler(const Config &timeouts);
 		~IpReassembler();
 
 		/**

@@ -78,7 +78,7 @@ void signal_handler(int signum)
 
 void extract(Sniffer *sniffer, const Config *config, bool is_running_live)
 {
-	IpReassembler reasm;
+	IpReassembler reasm(*config);
 	ConversationReconstructor conv_reconstructor(*config);
 	StatsEngine stats_engine(config);
 

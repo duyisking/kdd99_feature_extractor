@@ -3,16 +3,10 @@
 
 namespace FeatureExtractor {
 	// 
-	
-	IpReassembler::IpReassembler()
-		: timeouts()
-		, timeout_interval(timeouts.get_conversation_check_interval_ms())
-	{
-	}
 
-	IpReassembler::IpReassembler(Config &timeouts)
+	IpReassembler::IpReassembler(const Config &timeouts)
 		: timeouts(timeouts)
-		, timeout_interval(timeouts.get_conversation_check_interval_ms())
+		, timeout_interval(timeouts.get_ipfrag_check_interval_ms())
 	{
 	}
 
@@ -119,7 +113,6 @@ namespace FeatureExtractor {
 	{
 		// Run no more often than once per timeout check interval
 		if (!timeout_interval.is_timedout(now)) {
-			timeout_interval.update_time(now);
 			return;
 		}
 		timeout_interval.update_time(now);
