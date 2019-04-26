@@ -23,7 +23,7 @@ namespace FeatureExtractor {
 		, tcp_last_ack_timeout(30000)
 		, udp_timeout(2000)
 		, icmp_timeout(2000)
-		, conversation_check_interval_ms(1000)
+		, conversation_check_interval_ms(100)
 		, time_window_size_ms(2000)
 		, count_window_size(100)
 		, print_extra_features(false)
