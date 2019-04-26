@@ -138,6 +138,8 @@ namespace FeatureExtractor {
 		f->set_ip_frag_offset((uint16_t) ip->frag_offset());
 		f->set_ip_payload_length(ntohs(ip->total_length) - ip->header_length());
 
+        f->set_length(f->get_ip_payload_length());
+
 		// Look for L4 headers only in first fragment
 		if (f->get_ip_frag_offset() > 0)
 			return f;
@@ -146,26 +148,30 @@ namespace FeatureExtractor {
 		tcp_header_t *tcp = nullptr;
 		udp_header_t *udp = nullptr;
 		icmp_header_t *icmp = nullptr;
+        size_t ip_payload_length = f->get_ip_payload_length();
 		switch (ip->protocol) {
 		case TCP:
-			assert(f->get_ip_payload_length() >= tcp->TCP_MIN_HEADER_LENGTH && "Packet too short to fit TCP header");
-			tcp = (tcp_header_t *)ip->get_sdu();
-			f->set_src_port(ntohs(tcp->src_port));
+            assert(ip_payload_length >= tcp->TCP_MIN_HEADER_LENGTH && "Packet too short to fit TCP header");
+            tcp = (tcp_header_t *)ip->get_sdu();
+            f->set_length(ip_payload_length - (tcp->data_offset >> 2));
+            f->set_src_port(ntohs(tcp->src_port));
 			f->set_dst_port(ntohs(tcp->dst_port));
 			f->set_tcp_flags(tcp->flags);
 			break;
 
 		case UDP:
-			assert(f->get_ip_payload_length() >= udp->UDP_MIN_HEADER_LENGTH && "Packet too short to fit UDP header");
-			udp = (udp_header_t *)ip->get_sdu();
-			f->set_src_port(ntohs(udp->src_port));
+            assert(ip_payload_length >= udp->UDP_MIN_HEADER_LENGTH && "Packet too short to fit UDP header");
+            udp = (udp_header_t *)ip->get_sdu();
+            f->set_length(ip_payload_length - 8);
+            f->set_src_port(ntohs(udp->src_port));
 			f->set_dst_port(ntohs(udp->dst_port));
 			break;
 
 		case ICMP:
-			assert(f->get_ip_payload_length() >= icmp->ICMP_MIN_HEADER_LENGTH && "Packet too short to fit ICMP header");
-			icmp = (icmp_header_t *)ip->get_sdu();
-			f->set_icmp_type(icmp->type);
+            assert(ip_payload_length >= icmp->ICMP_MIN_HEADER_LENGTH && "Packet too short to fit ICMP header");
+            icmp = (icmp_header_t *)ip->get_sdu();
+            f->set_length(ip_payload_length - 8);
+            f->set_icmp_type(icmp->type);
 			f->set_icmp_code(icmp->code);
 			break;
 
