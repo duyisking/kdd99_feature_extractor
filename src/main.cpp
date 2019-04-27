@@ -80,7 +80,7 @@ void usage(const char *name)
          << " -tlt MS       TCP last ACK timeout (default 30000)" << endl
          << " -ut  MS       UDP timeout  (default 2000)" << endl
          << " -it  MS       ICMP timeout  (default 2000)" << endl
-         << " -ci  MS       Max time between timed out connection lookups in ms (default 1000)" << endl
+         << " -ci  MS       Max time between timed out connection lookups in ms (default 100)" << endl
          << " -t   MS       Time window size in ms (default 2000)" << endl
          << " -c   NUMBER   Count window size (default 100)" << endl
          << endl;
