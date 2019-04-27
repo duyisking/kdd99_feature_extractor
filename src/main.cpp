@@ -71,13 +71,13 @@ void usage(const char *name)
          << " -o   FILE     Write all output to FILE instead of standard output" << endl
          << " -a   BYTES    Additional frame length to be add to each frame in bytes" << endl
          << "                 (e.g. 4B Ethernet CRC) (default 0)" << endl
-         << " -ft  SECONDS  IP reassembly timeout (default 30)" << endl
+         << " -ft  MS       IP reassembly timeout (default 30 seconds)" << endl
          << " -fi  MS       Max time between timed out IP fragments lookups in ms (default 1000)" << endl
          << " -tst MS       TCP SYN timeout for states S0, S1 (default 2000)" << endl
          << " -tet MS       TCP timeout for established connections (default 1 day)  " << endl
          << " -trt MS       TCP RST timeout for states REJ, RSTO, RSTR, RSTOS0 (default 2000)" << endl
          << " -tft MS       TCP FIN timeout for states S2, S3 (default 2000)" << endl
-         << " -tlt MS       TCP last ACK timeout (default 30000)" << endl
+         << " -tlt MS       TCP last ACK timeout (default 30 seconds)" << endl
          << " -ut  MS       UDP timeout  (default 2000)" << endl
          << " -it  MS       ICMP timeout  (default 2000)" << endl
          << " -ci  MS       Max time between timed out connection lookups in ms (default 100)" << endl

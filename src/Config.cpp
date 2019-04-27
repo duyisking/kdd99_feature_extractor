@@ -14,7 +14,7 @@ namespace FeatureExtractor {
 		, interface_num(1)
 		, pcap_read_timeout(1000)
 		, additional_frame_len(0)
-		, ipfrag_timeout(30)
+		, ipfrag_timeout(30000)
 		, ipfrag_check_interval_ms(1000)
 		, tcp_syn_timeout(2000)
 		, tcp_estab_timeout(24 * 3600 * 1000) // 1 day

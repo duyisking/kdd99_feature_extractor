@@ -118,7 +118,7 @@ namespace FeatureExtractor {
 		timeout_interval.update_time(now);
 
 		// Maximal timestamps that timedout conversation in given state can have
-		Timestamp max_timeout_ts = now - (timeouts.get_ipfrag_timeout() * 1000000);
+		Timestamp max_timeout_ts = now - (timeouts.get_ipfrag_timeout() * 1000);
 
 		// Erasing during iteration available since C++11
 		// http://stackoverflow.com/a/263958/3503528
