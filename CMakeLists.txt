@@ -18,4 +18,9 @@ message(STATUS "PCAP_FOUND=${PCAP_FOUND}")
 message(STATUS "PCAP_LIBRARIES=${PCAP_LIBRARIES}")
 message(STATUS "PCAP_INCLUDE_DIR=${PCAP_INCLUDE_DIR}")
 
+find_package(Threads)
+include_directories(BEFORE ${CMAKE_THREAD_LIBS_INIT})
+
+message(STATUS "CMAKE_THREAD_LIBS_INIT=${CMAKE_THREAD_LIBS_INIT}")
+
 add_subdirectory(src)

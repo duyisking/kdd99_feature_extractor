@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <string.h>
 #include <assert.h>
+#include <thread>
+#include <mutex>
 
 #include "Extractor.h"
 #include "IpReassembler.h"
@@ -71,8 +73,7 @@ namespace FeatureExtractor {
         delete config;
 	}
 
-	void Extractor::start()
-    {
+    void Extractor::push_connection() {
         IpReassembler reasm(*config);
         ConversationReconstructor conv_reconstructor(*config);
         StatsEngine stats_engine(config);
@@ -110,11 +111,10 @@ namespace FeatureExtractor {
             // Output timedout conversations 
             Conversation *conv;
             while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
-                ConversationFeatures *cf = stats_engine.calculate_features(conv);
+                conn_mutex.lock();
+                cfs.push(stats_engine.calculate_features(conv));
+                conn_mutex.unlock();
                 conv = nullptr;		// Should not be used anymore, object will commit suicide
-
-                cf->print(config->should_print_extra_features());
-                delete cf;
             }
         }
 
@@ -124,12 +124,44 @@ namespace FeatureExtractor {
         // Output leftover conversations
         Conversation *conv;
         while ((conv = conv_reconstructor.get_next_conversation()) != nullptr) {
-            ConversationFeatures *cf = stats_engine.calculate_features(conv);
+            conn_mutex.lock();
+            cfs.push(stats_engine.calculate_features(conv));
+            conn_mutex.unlock();
             conv = nullptr;
-
-            cf->print(config->should_print_extra_features());
-            delete cf;
         }
+
+        stop_reading = true;
+    }
+
+    void Extractor::read_connection() {
+        int count = 0;
+        while (!stop_reading) {
+            conn_mutex.lock();
+            queue<ConversationFeatures*> local_cfs;
+            while (!cfs.empty()) {
+                local_cfs.push(cfs.front());
+                cfs.pop();
+                count += 1;
+            }
+            conn_mutex.unlock();
+            while (!local_cfs.empty()) {
+                ConversationFeatures *cf = local_cfs.front();
+                local_cfs.pop();
+                cf->print(config->should_print_extra_features());
+            }
+        }
+        cout << count << endl;
+    }
+
+	void Extractor::start()
+    {
+        stop_reading = false;
+
+        std::thread thr1(&Extractor::read_connection, this);
+        std::thread thr2(&Extractor::push_connection, this);
+        
+        thr1.join();
+        thr2.join();
     }
 
     void Extractor::stop() {

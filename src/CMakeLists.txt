@@ -19,4 +19,4 @@ endif()
 
 include_directories(${INCLUDES})
 add_executable(kdd99extractor ${SOURCES})
-target_link_libraries(kdd99extractor ${LIBS})
+target_link_libraries(kdd99extractor ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
