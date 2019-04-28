@@ -13,6 +13,7 @@ namespace FeatureExtractor {
 
     Extractor::Extractor(int argc, char **argv)
         : temination_requested(false)
+        , name(argv[0])
     {
 		parse_args(argc, argv);
         if (config->get_files_count() == 0) {
@@ -108,7 +109,7 @@ namespace FeatureExtractor {
         temination_requested = true;
     }
 
-    void Extractor::usage(const char *name)
+    void Extractor::usage()
     {
         // Option '-' orignaly meant to use big read timeouts and exit on first timeout. Other approach used
         // because original approach did not work (does this option make sense now?).
@@ -177,7 +178,7 @@ namespace FeatureExtractor {
         for (i = 1; i < argc && argv[i][0] == '-'; i++) {
             size_t len = strlen(argv[i]);
             if (len < 2)
-                invalid_option(argv[i], argv[0]);
+                invalid_option(argv[i]);
 
             // Second character
             char *endptr;
@@ -186,7 +187,7 @@ namespace FeatureExtractor {
             switch (argv[i][1]) {
             case '-': // Long option
                 if (strcmp(argv[i], "--help") == 0) {
-                    usage(argv[0]);
+                    usage();
                     exit(0);
                 }
                 if (strcmp(argv[i], "--list") == 0) {
@@ -194,11 +195,11 @@ namespace FeatureExtractor {
                     exit(0);
                 }
 
-                invalid_option(argv[i], argv[0]);
+                invalid_option(argv[i]);
                 break;
 
             case 'h':
-                usage(argv[0]);
+                usage();
                 exit(0);
                 break;
 
@@ -210,49 +211,49 @@ namespace FeatureExtractor {
             case 'i':
                 if (len == 2) {
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_interface_num(num);
                 }
                 else if (len == 3 && argv[i][2] == 't') {	// Option -it
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_icmp_timeout(num);
                 }
                 else {
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
                 }
                 break;
 
             case 'e':
                 if (len != 2)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 config->set_print_extra_features(true);
                 break;
 
             case 'v':
                 if (len != 2)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 config->set_print_filename(true);
                 break;
 
             case 'o':
                 if (len != 2)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 if (argc <= ++i)
-                    invalid_option_value(argv[i - 1], "", argv[0]);
+                    invalid_option_value(argv[i - 1], "");
 
                 out_stream.open(argv[i]);
                 // streambuf *coutbuf = std::cout.rdbuf(); //save old buf
@@ -261,28 +262,28 @@ namespace FeatureExtractor {
 
             case 'p':
                 if (len != 2)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 if (argc <= ++i)
-                    invalid_option_value(argv[i - 1], "", argv[0]);
+                    invalid_option_value(argv[i - 1], "");
 
                 num = strtol(argv[i], &endptr, 10);
                 if (endptr < argv[i] + strlen(argv[i]))
-                    invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                    invalid_option_value(argv[i - 1], argv[i]);
 
                 config->set_pcap_read_timeout(num);
                 break;
 
             case 'a':
                 if (len != 2)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 if (argc <= ++i)
-                    invalid_option_value(argv[i - 1], "", argv[0]);
+                    invalid_option_value(argv[i - 1], "");
 
                 num = strtol(argv[i], &endptr, 10);
                 if (endptr < argv[i] + strlen(argv[i]))
-                    invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                    invalid_option_value(argv[i - 1], argv[i]);
 
                 config->set_additional_frame_len(num);
                 break;
@@ -290,74 +291,74 @@ namespace FeatureExtractor {
             case 'c':
                 if (len == 2) {
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_count_window_size(num);
                 }
                 else if (len == 3 && argv[i][2] == 'i') {	// Option -ci
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_conversation_check_interval_ms(num);
                 }
                 else {
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
                 }
                 break;
 
             case 'u':
                 // Limit to '-ut'
                 if (len != 3 || argv[i][2] != 't')
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 if (argc <= ++i)
-                    invalid_option_value(argv[i - 1], "", argv[0]);
+                    invalid_option_value(argv[i - 1], "");
 
                 num = strtol(argv[i], &endptr, 10);
                 if (endptr < argv[i] + strlen(argv[i]))
-                    invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                    invalid_option_value(argv[i - 1], argv[i]);
 
                 config->set_udp_timeout(num);
                 break;
 
             case 'f':
                 if (len != 3)
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
 
                 // Third character
                 switch (argv[i][2]) {
                 case 't':
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_ipfrag_timeout(num);
                     break;
 
                 case 'i':
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_ipfrag_check_interval_ms(num);
                     break;
 
                 default:
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
                     break;
                 }
                 break;
@@ -365,11 +366,11 @@ namespace FeatureExtractor {
             case 't':
                 if (len == 2) {
                     if (argc <= ++i)
-                        invalid_option_value(argv[i - 1], "", argv[0]);
+                        invalid_option_value(argv[i - 1], "");
 
                     num = strtol(argv[i], &endptr, 10);
                     if (endptr < argv[i] + strlen(argv[i]))
-                        invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                        invalid_option_value(argv[i - 1], argv[i]);
 
                     config->set_time_window_size_ms(num);
                 }
@@ -378,71 +379,71 @@ namespace FeatureExtractor {
                     switch (argv[i][2]) {
                     case 's':
                         if (argc <= ++i)
-                            invalid_option_value(argv[i - 1], "", argv[0]);
+                            invalid_option_value(argv[i - 1], "");
 
                         num = strtol(argv[i], &endptr, 10);
                         if (endptr < argv[i] + strlen(argv[i]))
-                            invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                            invalid_option_value(argv[i - 1], argv[i]);
 
                         config->set_tcp_syn_timeout(num);
                         break;
 
                     case 'e':
                         if (argc <= ++i)
-                            invalid_option_value(argv[i - 1], "", argv[0]);
+                            invalid_option_value(argv[i - 1], "");
 
                         num = strtol(argv[i], &endptr, 10);
                         if (endptr < argv[i] + strlen(argv[i]))
-                            invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                            invalid_option_value(argv[i - 1], argv[i]);
 
                         config->set_tcp_estab_timeout(num);
                         break;
 
                     case 'r':
                         if (argc <= ++i)
-                            invalid_option_value(argv[i - 1], "", argv[0]);
+                            invalid_option_value(argv[i - 1], "");
 
                         num = strtol(argv[i], &endptr, 10);
                         if (endptr < argv[i] + strlen(argv[i]))
-                            invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                            invalid_option_value(argv[i - 1], argv[i]);
 
                         config->set_tcp_rst_timeout(num);
                         break;
 
                     case 'f':
                         if (argc <= ++i)
-                            invalid_option_value(argv[i - 1], "", argv[0]);
+                            invalid_option_value(argv[i - 1], "");
 
                         num = strtol(argv[i], &endptr, 10);
                         if (endptr < argv[i] + strlen(argv[i]))
-                            invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                            invalid_option_value(argv[i - 1], argv[i]);
 
                         config->set_tcp_fin_timeout(num);
                         break;
 
                     case 'l':
                         if (argc <= ++i)
-                            invalid_option_value(argv[i - 1], "", argv[0]);
+                            invalid_option_value(argv[i - 1], "");
 
                         num = strtol(argv[i], &endptr, 10);
                         if (endptr < argv[i] + strlen(argv[i]))
-                            invalid_option_value(argv[i - 1], argv[i], argv[0]);
+                            invalid_option_value(argv[i - 1], argv[i]);
 
                         config->set_tcp_last_ack_timeout(num);
                         break;
 
                     default:
-                        invalid_option(argv[i], argv[0]);
+                        invalid_option(argv[i]);
                         break;
                     }
                 }
                 else {
-                    invalid_option(argv[i], argv[0]);
+                    invalid_option(argv[i]);
                 }
                 break;
 
             default:
-                invalid_option(argv[i], argv[0]);
+                invalid_option(argv[i]);
                 break;
             }
         }
@@ -455,17 +456,17 @@ namespace FeatureExtractor {
         }
     }
 
-    void Extractor::invalid_option(const char *opt, const char *progname)
+    void Extractor::invalid_option(const char *opt)
     {
         cout << "Invalid option '" << opt << "'" << endl << endl;
-        usage(progname);
+        usage();
         exit(1);
     }
 
-    void Extractor::invalid_option_value(const char *opt, const char *val, const char *progname)
+    void Extractor::invalid_option_value(const char *opt, const char *val)
     {
         cout << "Invalid value '" << val << "' for option '" << opt << "'" << endl << endl;
-        usage(progname);
+        usage();
         exit(1);
     }
 
