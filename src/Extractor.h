@@ -24,6 +24,7 @@ namespace FeatureExtractor {
 
 	public:
 
+        Extractor();
         Extractor(int argc, char **argv);
         ~Extractor();
 

@@ -11,6 +11,33 @@
 
 namespace FeatureExtractor {
 
+    Extractor::Extractor()
+        : temination_requested(false)
+        , name("kdd99extractor")
+    {
+        config = new Config();
+        if (config->get_files_count() == 0) {
+            // Input from interface
+            int inum = config->get_interface_num();
+            if (config->should_print_filename())
+                cout << "INTERFACE " << inum << endl;
+            sniffer = new Sniffer(inum, config);
+            is_running_live = true;
+        }
+        else {
+            // Input from files
+            int count = config->get_files_count();
+            char **files = config->get_files_values();
+            for (int i = 0; i < count; i++) {
+                if (config->should_print_filename())
+                    cout << "FILE '" << files[i] << "'" << endl;
+
+                sniffer = new Sniffer(files[i], config);
+            }
+            is_running_live = false;
+        }
+    }
+
     Extractor::Extractor(int argc, char **argv)
         : temination_requested(false)
         , name(argv[0])
