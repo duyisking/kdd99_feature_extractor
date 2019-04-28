@@ -9,6 +9,7 @@ namespace FeatureExtractor {
 
 	class Extractor
 	{
+        
         Sniffer *sniffer;
         Config *config;
         bool is_running_live;
@@ -18,7 +19,10 @@ namespace FeatureExtractor {
         void list_interfaces();
         void invalid_option(const char *opt, const char *progname);
         void invalid_option_value(const char *opt, const char *val, const char *progname);
+        void parse_args(int argc, char **argv);
+
 	public:
+
         Extractor(int argc, char **argv);
         ~Extractor();
 
@@ -26,6 +30,6 @@ namespace FeatureExtractor {
         void stop();
 
         void usage(const char *name);
-        void parse_args(int argc, char **argv);
+        
 	};
 }
