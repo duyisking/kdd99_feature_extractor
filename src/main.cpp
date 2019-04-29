@@ -36,6 +36,5 @@ int main(int argc, char **argv)
 
 void signal_handler(int signum)
 {
-	cerr << "Terminating extractor (signal " << signum << " received)" << endl;
     extractor->stop();
 }
