@@ -1,3 +1,5 @@
+#include <boost/interprocess/file_mapping.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -12,6 +14,7 @@
 #include "StatsEngine.h"
 
 namespace FeatureExtractor {
+    using namespace boost::interprocess;
 
     Extractor::Extractor()
         : temination_requested(false)
@@ -137,6 +140,23 @@ namespace FeatureExtractor {
     void Extractor::read_connection()
     {
         int count = 0;
+        const char *file_name = "/tmp/kdd99extractor_connection_queue.bin";
+        const std::size_t file_size = 256 * 1024;
+        {
+            file_mapping::remove(file_name);
+            std::filebuf fbuf;
+            fbuf.open(file_name, std::ios_base::in | std::ios_base::out
+                                | std::ios_base::trunc | std::ios_base::binary);
+            //Set the size
+            fbuf.pubseekoff(file_size - 1, std::ios_base::beg);
+            fbuf.sputc(0);
+        }
+        file_mapping m_file(file_name, read_write);
+        mapped_region region(m_file, read_write);
+
+        void *base_addr = region.get_address();
+        void *addr = base_addr;
+
         while (!stop_reading) {
             conn_mutex.lock();
             queue<ConversationFeatures*> local_cfs;
@@ -149,7 +169,14 @@ namespace FeatureExtractor {
             while (!local_cfs.empty()) {
                 ConversationFeatures *cf = local_cfs.front();
                 local_cfs.pop();
-                cf->print(config->should_print_extra_features());
+                string cf_string = cf->to_string();
+                cf_string = "1" + cf_string; // "1" indicates that this connection has not been read yet
+                memset(addr, 0, 256);
+                memcpy(addr, cf_string.c_str(), cf_string.size());
+                addr = addr + 256;
+                if (addr >= base_addr + file_size) {
+                    addr = base_addr;
+                }
             }
         }
         cout << count << endl;

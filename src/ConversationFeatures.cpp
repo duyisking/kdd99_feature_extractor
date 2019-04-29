@@ -1,6 +1,7 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <string>
 #include "ConversationFeatures.h"
 
 
@@ -269,5 +270,48 @@ namespace FeatureExtractor {
 		ss << "dst_host_srv_rerror_rate = " << dst_host_srv_rerror_rate << endl;
 		cout << ss.str() << endl;
 	}
+
+    std::string ConversationFeatures::to_string() const
+    {
+        stringstream ss;
+
+		// Intrinsic features
+		ss << noshowpoint << setprecision(0) << (conv->get_duration_ms() / 1000) << ','; // Cut fractional part
+		ss << conv->get_protocol_type_str() << ',';
+		ss << conv->get_service_str() << ',';
+		ss << conv->get_state_str() << ',';
+		ss << conv->get_src_bytes() << ',';
+		ss << conv->get_dst_bytes() << ',';
+		ss << conv->land() << ',';
+		ss << conv->get_wrong_fragments() << ',';
+		ss << conv->get_urgent_packets() << ',';
+
+		// Derived time windows features
+		ss << fixed << showpoint <<setprecision(2);
+		ss << count << ',';
+		ss << srv_count << ',';
+		ss << serror_rate << ',';
+		ss << srv_serror_rate << ',';
+		ss << rerror_rate << ',';
+		ss << srv_rerror_rate << ',';
+		ss << same_srv_rate << ',';
+		ss << diff_srv_rate << ',';
+		ss << get_srv_diff_host_rate() << ',';
+
+		// Derived connection count window features
+		ss << dst_host_count << ',';
+		ss << dst_host_srv_count << ',';
+		ss << dst_host_same_srv_rate << ',';
+		ss << dst_host_diff_srv_rate << ',';
+		ss << dst_host_same_src_port_rate << ',';
+		ss << get_dst_host_srv_diff_host_rate() << ',';
+		ss << dst_host_serror_rate << ',';
+		ss << dst_host_srv_serror_rate << ',';
+		ss << dst_host_rerror_rate << ',';
+		ss << dst_host_srv_rerror_rate;
+
+        std::string result = ss.str();
+        return result;
+    }
 
 }

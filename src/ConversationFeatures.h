@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "types.h"
 #include "Conversation.h"
 
@@ -126,5 +128,10 @@ namespace FeatureExtractor {
 		 * Human readable print to stdout
 		 */
 		void print_human() const;
+
+        /**
+         * Return string representation of the connection
+         */
+        std::string to_string() const;
 	};
 }
