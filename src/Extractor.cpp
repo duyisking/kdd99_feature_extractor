@@ -73,7 +73,8 @@ namespace FeatureExtractor {
         delete config;
 	}
 
-    void Extractor::push_connection() {
+    void Extractor::push_connection()
+    {
         IpReassembler reasm(*config);
         ConversationReconstructor conv_reconstructor(*config);
         StatsEngine stats_engine(config);
@@ -133,7 +134,8 @@ namespace FeatureExtractor {
         stop_reading = true;
     }
 
-    void Extractor::read_connection() {
+    void Extractor::read_connection()
+    {
         int count = 0;
         while (!stop_reading) {
             conn_mutex.lock();
@@ -164,7 +166,8 @@ namespace FeatureExtractor {
         thr2.join();
     }
 
-    void Extractor::stop() {
+    void Extractor::stop()
+    {
         temination_requested = true;
     }
 
