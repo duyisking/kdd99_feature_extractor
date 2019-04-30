@@ -139,9 +139,11 @@ namespace FeatureExtractor {
 
     void Extractor::read_connection()
     {
+        #define connection_size 256
+        #define connection_num 1024
         int count = 0;
         const char *file_name = "/tmp/kdd99extractor_connection_queue.bin";
-        const std::size_t file_size = 256 * 1024;
+        const std::size_t file_size = connection_size * connection_num;
         {
             file_mapping::remove(file_name);
             std::filebuf fbuf;
@@ -171,9 +173,9 @@ namespace FeatureExtractor {
                 local_cfs.pop();
                 string cf_string = cf->to_string();
                 cf_string = "1" + cf_string; // "1" indicates that this connection has not been read yet
-                memset(addr, 0, 256);
+                memset(addr, 0, connection_size);
                 memcpy(addr, cf_string.c_str(), cf_string.size());
-                addr = addr + 256;
+                addr = addr + connection_size;
                 if (addr >= base_addr + file_size) {
                     addr = base_addr;
                 }
