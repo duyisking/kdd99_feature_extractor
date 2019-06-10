@@ -14,7 +14,7 @@ with open('/tmp/kdd99extractor_connection_queue.bin', 'r+b') as file:
                     mm.write_byte(0)
                     data = mm.read(255)
                     count += 1
-                    # print(data.decode('unicode_escape'))
+                    print(data.decode('unicode_escape'))
                 else:
                     mm.seek(-1, os.SEEK_CUR)
             except IndexError:
